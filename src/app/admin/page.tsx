@@ -54,7 +54,7 @@ const AdminPage: React.FC = () => {
     };
 
     fetchFiles();
-  }, [folder, isAuthenticated]); // Runs both on mount and when folder changes
+  }, [supabase.storage, folder, isAuthenticated]); // Runs both on mount and when folder changes
 
   // Handle file upload
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

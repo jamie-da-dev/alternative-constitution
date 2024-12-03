@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function ErrorPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -6,12 +8,11 @@ export default function ErrorPage() {
         <p className="text-lg text-gray-800 mb-6">
           Sorry, something went wrong. Please try again later.
         </p>
-        <a
-          href="/"
-          className="inline-block text-indigo-600 hover:underline text-sm"
-        >
-          Go back to home
-        </a>
+        <Link href="/">
+          <p className="inline-block text-indigo-600 hover:underline text-sm">
+            Go back to home
+          </p>
+        </Link>
       </div>
     </div>
   );

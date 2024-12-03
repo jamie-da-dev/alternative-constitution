@@ -78,7 +78,7 @@ const Navbar: React.FC = () => {
     };
 
     fetchFolderFiles();
-  }, []); // Only run once when component mounts
+  }, [supabase.storage]); // Only run once when component mounts
 
   const handleButtonClick = (category: string, index: number) => {
     setSelectedCategory(category);
