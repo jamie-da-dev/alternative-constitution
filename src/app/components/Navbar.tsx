@@ -7,7 +7,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 
 const Navbar: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1); // Start with -1 to indicate no item is selected
   const [alternativeConstitutionFiles, setAlternativeConstitutionFiles] =
     useState<string[]>([]);
   const [explanationFiles, setExplanationFiles] = useState<string[]>([]);
@@ -85,6 +85,15 @@ const Navbar: React.FC = () => {
 
   const handleClosePdf = () => {
     setShowPdf(false); // Hide PDF viewer when the X button is clicked
+    setSelectedIndex(-1); // Reset selected index when PDF is closed
+  };
+
+  // Helper function to add conditional class for highlighting selected item
+  const getButtonClass = (category: string, index: number) => {
+    if (selectedCategory === category && selectedIndex === index) {
+      return "text-blue-400"; // Highlight color when selected
+    }
+    return "text-white"; // Default color
   };
 
   return (
@@ -109,7 +118,10 @@ const Navbar: React.FC = () => {
                   return (
                     <li key={index}>
                       <button
-                        className="text-left" // Ensures the text aligns left and doesn't overflow
+                        className={`text-left ${getButtonClass(
+                          "Alternative Constitution",
+                          index
+                        )}`}
                         onClick={() =>
                           handleButtonClick("Alternative Constitution", index)
                         }
@@ -137,7 +149,10 @@ const Navbar: React.FC = () => {
                   return (
                     <li key={index}>
                       <button
-                        className="text-left" // Ensures the text aligns left and doesn't overflow
+                        className={`text-left ${getButtonClass(
+                          "Explanation",
+                          index
+                        )}`}
                         onClick={() => handleButtonClick("Explanation", index)}
                       >
                         {fileNameWithoutPdf}
@@ -163,7 +178,10 @@ const Navbar: React.FC = () => {
                   return (
                     <li key={index}>
                       <button
-                        className="text-left" // Ensures the text aligns left and doesn't overflow
+                        className={`text-left ${getButtonClass(
+                          "Listen Up",
+                          index
+                        )}`}
                         onClick={() => handleButtonClick("Listen Up", index)}
                       >
                         {fileNameWithoutPdf}
