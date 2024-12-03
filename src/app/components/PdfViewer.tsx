@@ -20,8 +20,6 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ folder, index }) => {
         setLoading(true);
         setError(null); // Reset error state before fetching new file
 
-        console.log("Fetching files from folder:", folder);
-
         // List all files in the specified folder in Supabase Storage
         const { data, error: listError } = await supabase.storage
           .from("pdf") // Bucket name
@@ -32,15 +30,12 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ folder, index }) => {
           return;
         }
 
-        console.log("Files in folder:", data);
-
         // If files are available in the folder
         if (data?.length > 0) {
           // Ensure the index is within the bounds of available files
           const file = data[index];
           if (file) {
             const filePath = `${folder}/${file.name}`;
-            console.log("File path:", filePath);
 
             // Get public URL for the file
             const { data: publicUrlData } = supabase.storage
@@ -48,7 +43,6 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ folder, index }) => {
               .getPublicUrl(filePath);
 
             if (publicUrlData?.publicUrl) {
-              console.log("Public URL data:", publicUrlData);
               setPdfUrl(publicUrlData.publicUrl); // Set the public URL
             } else {
               setError("No valid public URL found.");

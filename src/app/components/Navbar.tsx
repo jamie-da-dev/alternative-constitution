@@ -31,9 +31,6 @@ const Navbar: React.FC = () => {
           .list("Alternative Constitution");
         const explanation = supabase.storage.from("pdf").list("Explanation");
         const listenUp = supabase.storage.from("pdf").list("Listen Up");
-        console.log(alternativeConstitution);
-        console.log(explanation);
-
         // Wait for all the file fetches to complete
         const [altData, expData, listenUpData] = await Promise.all([
           alternativeConstitution,
@@ -78,7 +75,7 @@ const Navbar: React.FC = () => {
     };
 
     fetchFolderFiles();
-  }, [supabase.storage]); // Only run once when component mounts
+  }, []); // Only run once when component mounts
 
   const handleButtonClick = (category: string, index: number) => {
     setSelectedCategory(category);
