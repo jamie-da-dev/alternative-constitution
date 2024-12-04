@@ -2,47 +2,69 @@
 
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client"; // Adjust the import path as needed
-import { useRouter } from "next/navigation"; // Import useRouter from 'next/navigation'
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const AdminPage: React.FC = () => {
-  const [pdfFiles, setPdfFiles] = useState<string[]>([]); // List of existing files
+  const [pdfFiles, setPdfFiles] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
-  const [folder, setFolder] = useState<string>("Alternative Constitution"); // Folder to upload files to
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // Track authentication status
+  const [folder, setFolder] = useState<string>("Alternative Constitution");
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   const supabase = createClient();
-  const router = useRouter(); // Use the Next.js router for navigation
+  const router = useRouter();
 
   useEffect(() => {
     const checkUser = async () => {
       const { data, error } = await supabase.auth.getUser();
       if (error || !data?.user) {
-        setIsAuthenticated(false); // User is not authenticated
-        router.push("/login"); // Redirect to the login page if the user is not authenticated
+        setIsAuthenticated(false);
+        router.push("/login");
       } else {
-        setIsAuthenticated(true); // User is authenticated
+        setIsAuthenticated(true);
       }
     };
 
     checkUser();
-  }, [router, supabase.auth]); // Run the effect once on mount
+  }, [router, supabase.auth]);
 
-  // Fetch existing PDF files only if authenticated
   useEffect(() => {
-    if (isAuthenticated === null) return; // Don't fetch files until authentication state is determined
+    if (isAuthenticated === null) return;
 
     const fetchFiles = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const { data, error } = await supabase.storage.from("pdf").list(folder);
+        // Fetch file order from the JSON API
+        const response = await axios.get("/api/order");
+        const orderData = response.data;
 
-        if (error) throw error;
+        // Fetch the current files from Supabase
+        const { data, error: fetchError } = await supabase.storage
+          .from("pdf")
+          .list(folder);
 
-        setPdfFiles(data.map((file) => file.name));
+        if (fetchError) throw fetchError;
+
+        const currentFiles = data.map((file) => file.name);
+
+        // Update order based on current files, adding missing files and removing deleted ones
+        let updatedOrder = currentFiles;
+
+        if (orderData[folder]) {
+          const orderedFiles = orderData[folder].filter((file: string) =>
+            currentFiles.includes(file)
+          );
+          const newFiles = currentFiles.filter(
+            (file) => !orderData[folder].includes(file)
+          );
+          updatedOrder = [...orderedFiles, ...newFiles];
+        }
+
+        setPdfFiles(updatedOrder);
       } catch (error) {
         setError(
           "Error fetching files: " +
@@ -54,9 +76,8 @@ const AdminPage: React.FC = () => {
     };
 
     fetchFiles();
-  }, [folder, isAuthenticated]); // Runs both on mount and when folder changes
+  }, [folder, isAuthenticated]);
 
-  // Handle file upload
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       setFileToUpload(e.target.files[0]);
@@ -77,10 +98,11 @@ const AdminPage: React.FC = () => {
       );
     } else {
       // Update the file list after the upload is successful
-      setPdfFiles((prevFiles) => [...prevFiles, fileToUpload.name]);
-      setFileToUpload(null); // Clear the selected file after upload
+      const updatedFiles = [...pdfFiles, fileToUpload.name];
+      setPdfFiles(updatedFiles);
+      handleSaveOrder(updatedFiles); // Pass updated files to save the order
+      setFileToUpload(null);
 
-      // Reset the file input field
       const inputElement = document.querySelector('input[type="file"]');
       if (inputElement) {
         (inputElement as HTMLInputElement).value = "";
@@ -90,7 +112,6 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  // Handle file deletion
   const handleDelete = async (fileName: string) => {
     const confirmDelete = window.confirm(
       `Are you sure you want to delete the file: ${fileName}?`
@@ -107,18 +128,60 @@ const AdminPage: React.FC = () => {
             (error instanceof Error ? error.message : "")
         );
       } else {
-        setPdfFiles((prevFiles) =>
-          prevFiles.filter((file) => file !== fileName)
-        );
+        const updatedFiles = pdfFiles.filter((file) => file !== fileName);
+        setPdfFiles(updatedFiles);
+        handleSaveOrder(updatedFiles); // Pass updated files to save the order
       }
     }
   };
 
   const handleGoBack = () => {
-    router.push("/"); // Redirect to home page
+    router.push("/");
   };
 
-  // Don't render the page until the authentication status is determined
+  const handleDragStart =
+    (index: number) => (event: React.DragEvent<HTMLLIElement>) => {
+      event.dataTransfer.setData("text/plain", index.toString());
+    };
+
+  const handleDragOver = (event: React.DragEvent<HTMLLIElement>) => {
+    event.preventDefault();
+  };
+
+  const handleDrop =
+    (index: number) => (event: React.DragEvent<HTMLLIElement>) => {
+      event.preventDefault();
+      const draggedIndex = parseInt(
+        event.dataTransfer.getData("text/plain"),
+        10
+      );
+
+      if (draggedIndex !== index) {
+        const updatedFiles = [...pdfFiles];
+        const [movedFile] = updatedFiles.splice(draggedIndex, 1);
+        updatedFiles.splice(index, 0, movedFile);
+        setPdfFiles(updatedFiles);
+      }
+    };
+
+  const handleSaveOrder = async (updatedFiles: string[] = pdfFiles) => {
+    try {
+      // Fetch the current order and update the relevant category
+      const response = await axios.get("/api/order");
+      const orderData = response.data;
+
+      orderData[folder] = updatedFiles;
+
+      await axios.post("/api/order", orderData);
+      alert("File order saved successfully!");
+    } catch (error) {
+      setError(
+        "Error saving file order: " +
+          (error instanceof Error ? error.message : "")
+      );
+    }
+  };
+
   if (isAuthenticated === null) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100">
@@ -133,7 +196,7 @@ const AdminPage: React.FC = () => {
   }
 
   if (isAuthenticated === false) {
-    return null; // Or a placeholder loading state
+    return null;
   }
 
   return (
@@ -149,7 +212,6 @@ const AdminPage: React.FC = () => {
         Admin Page
       </h1>
 
-      {/* Folder Selection */}
       <div className="mb-6">
         <label
           htmlFor="folder-select"
@@ -171,7 +233,6 @@ const AdminPage: React.FC = () => {
         </select>
       </div>
 
-      {/* File Upload */}
       <div className="mb-6 flex justify-between items-center">
         <div className="flex-1 mr-4">
           <input
@@ -190,29 +251,40 @@ const AdminPage: React.FC = () => {
         </button>
       </div>
 
-      {/* File List */}
       <div className="file-list">
         {loading ? (
           <p className="text-center text-gray-600">Loading files...</p>
         ) : error ? (
           <p className="text-center text-red-500">Error: {error}</p>
         ) : pdfFiles.length > 0 ? (
-          <ul className="space-y-4">
-            {pdfFiles.map((file, index) => (
-              <li
-                key={index}
-                className="flex justify-between items-center p-4 bg-gray-100 rounded-md shadow-sm hover:bg-gray-100"
-              >
-                <span className="text-lg text-gray-800">{file}</span>
-                <button
-                  onClick={() => handleDelete(file)}
-                  className="text-red-500 hover:text-red-700"
+          <>
+            <ul className="space-y-4">
+              {pdfFiles.map((file, index) => (
+                <li
+                  key={file}
+                  className="flex justify-between items-center p-4 bg-gray-100 rounded-md shadow-sm hover:bg-gray-200"
+                  draggable
+                  onDragStart={handleDragStart(index)}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop(index)}
                 >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
+                  <span className="text-lg text-gray-800">{file}</span>
+                  <button
+                    onClick={() => handleDelete(file)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => handleSaveOrder()}
+              className="mt-6 px-6 py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700"
+            >
+              Save Order
+            </button>
+          </>
         ) : (
           <p className="text-center text-gray-600">
             No files found in the folder.

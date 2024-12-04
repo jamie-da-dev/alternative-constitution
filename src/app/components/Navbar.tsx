@@ -4,9 +4,11 @@ import React, { useState, useEffect } from "react";
 import PdfViewer from "./PdfViewer";
 import { createClient } from "@/utils/supabase/client"; // Adjust the import as needed
 import { SupabaseClient } from "@supabase/supabase-js";
+import axios from "axios"; // Import axios for API calls
 
 const Navbar: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState<string>(""); // Store the selected file name
   const [selectedIndex, setSelectedIndex] = useState<number>(-1); // Start with -1 to indicate no item is selected
   const [alternativeConstitutionFiles, setAlternativeConstitutionFiles] =
     useState<string[]>([]);
@@ -23,6 +25,10 @@ const Navbar: React.FC = () => {
       try {
         setLoading(true);
         setError(null); // Reset error state before fetching
+
+        // Fetch order configuration from order.json
+        const orderResponse = await axios.get("/api/order");
+        const orderConfig = orderResponse.data;
 
         // Fetch files from 'Alternative Constitution', 'Explanation', and 'Listen Up' folders
         const alternativeConstitution = supabase.storage
@@ -53,12 +59,24 @@ const Navbar: React.FC = () => {
         }
 
         if (altData.data && expData.data && listenUpData.data) {
-          // Set the file names to the corresponding state variables
+          // Sort and set files based on order.json data
           setAlternativeConstitutionFiles(
-            altData.data.map((file) => file.name)
+            orderConfig["Alternative Constitution"]?.length
+              ? orderConfig["Alternative Constitution"]
+              : altData.data.map((file) => file.name)
           );
-          setExplanationFiles(expData.data.map((file) => file.name));
-          setListenUpFiles(listenUpData.data.map((file) => file.name));
+
+          setExplanationFiles(
+            orderConfig["Explanation"]?.length
+              ? orderConfig["Explanation"]
+              : expData.data.map((file) => file.name)
+          );
+
+          setListenUpFiles(
+            orderConfig["Listen Up"]?.length
+              ? orderConfig["Listen Up"]
+              : listenUpData.data.map((file) => file.name)
+          );
         } else {
           setError("No files found in the specified folders.");
         }
@@ -75,15 +93,21 @@ const Navbar: React.FC = () => {
     fetchFolderFiles();
   }, []); // Only run once when component mounts
 
-  const handleButtonClick = (category: string, index: number) => {
+  const handleButtonClick = (
+    category: string,
+    index: number,
+    fileName: string
+  ) => {
     setSelectedCategory(category);
     setSelectedIndex(index);
+    setSelectedFile(fileName); // Set the selected file name
     setShowPdf(true); // Show PDF viewer when a file is selected
   };
 
   const handleClosePdf = () => {
     setShowPdf(false); // Hide PDF viewer when the X button is clicked
     setSelectedIndex(-1); // Reset selected index when PDF is closed
+    setSelectedFile(""); // Reset selected file
   };
 
   // Helper function to get button class for both text and indicator
@@ -105,7 +129,7 @@ const Navbar: React.FC = () => {
   return (
     <div className="fixed flex h-screen">
       {/* Left Navbar */}
-      <aside className="w-[500px] bg-gray-800 text-white p-4">
+      <aside className="w-[500px] bg-gray-800 text-white p-4 overflow-y-auto max-h-screen">
         <nav className="space-y-12 p-4">
           <div>
             <h3 className="font-semibold text-2xl mb-4">
@@ -130,7 +154,11 @@ const Navbar: React.FC = () => {
                         )}`}
                         aria-label={`Select ${fileNameWithoutPdf}`}
                         onClick={() =>
-                          handleButtonClick("Alternative Constitution", index)
+                          handleButtonClick(
+                            "Alternative Constitution",
+                            index,
+                            file
+                          )
                         }
                       />
                       <button
@@ -139,7 +167,11 @@ const Navbar: React.FC = () => {
                           index
                         )}`}
                         onClick={() =>
-                          handleButtonClick("Alternative Constitution", index)
+                          handleButtonClick(
+                            "Alternative Constitution",
+                            index,
+                            file
+                          )
                         }
                       >
                         {fileNameWithoutPdf}
@@ -170,14 +202,18 @@ const Navbar: React.FC = () => {
                           index
                         )}`}
                         aria-label={`Select ${fileNameWithoutPdf}`}
-                        onClick={() => handleButtonClick("Explanation", index)}
+                        onClick={() =>
+                          handleButtonClick("Explanation", index, file)
+                        }
                       />
                       <button
                         className={`text-left group-hover:text-blue-400 transition-colors ${getButtonClass(
                           "Explanation",
                           index
                         )}`}
-                        onClick={() => handleButtonClick("Explanation", index)}
+                        onClick={() =>
+                          handleButtonClick("Explanation", index, file)
+                        }
                       >
                         {fileNameWithoutPdf}
                       </button>
@@ -207,14 +243,18 @@ const Navbar: React.FC = () => {
                           index
                         )}`}
                         aria-label={`Select ${fileNameWithoutPdf}`}
-                        onClick={() => handleButtonClick("Listen Up", index)}
+                        onClick={() =>
+                          handleButtonClick("Listen Up", index, file)
+                        }
                       />
                       <button
                         className={`text-left group-hover:text-blue-400 transition-colors ${getButtonClass(
                           "Listen Up",
                           index
                         )}`}
-                        onClick={() => handleButtonClick("Listen Up", index)}
+                        onClick={() =>
+                          handleButtonClick("Listen Up", index, file)
+                        }
                       >
                         {fileNameWithoutPdf}
                       </button>
@@ -236,7 +276,7 @@ const Navbar: React.FC = () => {
             >
               X (Close)
             </button>
-            <PdfViewer folder={selectedCategory} index={selectedIndex} />
+            <PdfViewer folder={selectedCategory} fileName={selectedFile} />
           </div>
         </main>
       )}
