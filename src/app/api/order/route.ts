@@ -9,7 +9,7 @@ export async function GET() {
     const data = fs.readFileSync(orderFilePath, "utf-8");
     const json = JSON.parse(data);
     return NextResponse.json(json);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to read order file." },
       { status: 500 }
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     try {
       const data = fs.readFileSync(orderFilePath, "utf-8");
       existingData = JSON.parse(data);
-    } catch (readError) {
+    } catch {
       return NextResponse.json(
         { error: "Failed to read existing order file." },
         { status: 500 }
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     fs.writeFileSync(orderFilePath, JSON.stringify(updatedData, null, 2));
 
     return NextResponse.json({ message: "Order updated successfully." });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to write to order file." },
       { status: 500 }
