@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import PdfViewer from "./PdfViewer";
 import { createClient } from "@/utils/supabase/client"; // Adjust the import as needed
 import { SupabaseClient } from "@supabase/supabase-js";
-import axios from "axios"; // Import axios for API calls
 
 const Navbar: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -26,9 +25,15 @@ const Navbar: React.FC = () => {
         setLoading(true);
         setError(null); // Reset error state before fetching
 
-        // Fetch order configuration from order.json
-        const orderResponse = await axios.get("/api/order");
-        const orderConfig = orderResponse.data;
+        // Fetch file orders from Supabase
+        const { data: orderData, error: orderError } = await supabase
+          .from("pdf_order")
+          .select("category, file_order");
+
+        if (orderError) {
+          setError(orderError.message);
+          return;
+        }
 
         // Fetch files from 'Alternative Constitution', 'Explanation', and 'Listen Up' folders
         const alternativeConstitution = supabase.storage
@@ -58,23 +63,27 @@ const Navbar: React.FC = () => {
           return;
         }
 
-        if (altData.data && expData.data && listenUpData.data) {
-          // Sort and set files based on order.json data
+        if (altData.data && expData.data && listenUpData.data && orderData) {
+          const getOrderForCategory = (category: string) =>
+            orderData.find((item) => item.category === category)?.file_order ||
+            [];
+
+          // Sort and set files based on order data from the Supabase table
           setAlternativeConstitutionFiles(
-            orderConfig["Alternative Constitution"]?.length
-              ? orderConfig["Alternative Constitution"]
+            getOrderForCategory("Alternative Constitution").length
+              ? getOrderForCategory("Alternative Constitution")
               : altData.data.map((file) => file.name)
           );
 
           setExplanationFiles(
-            orderConfig["Explanation"]?.length
-              ? orderConfig["Explanation"]
+            getOrderForCategory("Explanation").length
+              ? getOrderForCategory("Explanation")
               : expData.data.map((file) => file.name)
           );
 
           setListenUpFiles(
-            orderConfig["Listen Up"]?.length
-              ? orderConfig["Listen Up"]
+            getOrderForCategory("Listen Up").length
+              ? getOrderForCategory("Listen Up")
               : listenUpData.data.map((file) => file.name)
           );
         } else {

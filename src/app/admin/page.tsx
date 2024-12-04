@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client"; // Adjust the import path as needed
 import { useRouter } from "next/navigation";
-import axios from "axios";
 
 const AdminPage: React.FC = () => {
   const [pdfFiles, setPdfFiles] = useState<string[]>([]);
@@ -38,28 +37,33 @@ const AdminPage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Fetch file order from the JSON API
-        const response = await axios.get("/api/order");
-        const orderData = response.data;
+        // Fetch file order from Supabase
+        const { data: orderData, error: orderError } = await supabase
+          .from("pdf_order")
+          .select("file_order")
+          .eq("category", folder)
+          .single();
 
-        // Fetch the current files from Supabase
-        const { data, error: fetchError } = await supabase.storage
+        if (orderError) throw orderError;
+
+        // Fetch the current files from Supabase storage
+        const { data: storageData, error: fetchError } = await supabase.storage
           .from("pdf")
           .list(folder);
 
         if (fetchError) throw fetchError;
 
-        const currentFiles = data.map((file) => file.name);
+        const currentFiles = storageData.map((file) => file.name);
 
         // Update order based on current files, adding missing files and removing deleted ones
         let updatedOrder = currentFiles;
 
-        if (orderData[folder]) {
-          const orderedFiles = orderData[folder].filter((file: string) =>
+        if (orderData?.file_order) {
+          const orderedFiles = orderData.file_order.filter((file: string) =>
             currentFiles.includes(file)
           );
           const newFiles = currentFiles.filter(
-            (file) => !orderData[folder].includes(file)
+            (file) => !orderData.file_order.includes(file)
           );
           updatedOrder = [...orderedFiles, ...newFiles];
         }
@@ -97,10 +101,9 @@ const AdminPage: React.FC = () => {
         "Error uploading file: " + (error instanceof Error ? error.message : "")
       );
     } else {
-      // Update the file list after the upload is successful
       const updatedFiles = [...pdfFiles, fileToUpload.name];
       setPdfFiles(updatedFiles);
-      handleSaveOrder(updatedFiles); // Pass updated files to save the order
+      handleSaveOrder(updatedFiles);
       setFileToUpload(null);
 
       const inputElement = document.querySelector('input[type="file"]');
@@ -130,7 +133,7 @@ const AdminPage: React.FC = () => {
       } else {
         const updatedFiles = pdfFiles.filter((file) => file !== fileName);
         setPdfFiles(updatedFiles);
-        handleSaveOrder(updatedFiles); // Pass updated files to save the order
+        handleSaveOrder(updatedFiles);
       }
     }
   };
@@ -166,13 +169,14 @@ const AdminPage: React.FC = () => {
 
   const handleSaveOrder = async (updatedFiles: string[] = pdfFiles) => {
     try {
-      // Fetch the current order and update the relevant category
-      const response = await axios.get("/api/order");
-      const orderData = response.data;
+      // Update the file order in Supabase for the selected category
+      const { error } = await supabase
+        .from("pdf_order")
+        .update({ file_order: updatedFiles })
+        .eq("category", folder);
 
-      orderData[folder] = updatedFiles;
+      if (error) throw error;
 
-      await axios.post("/api/order", orderData);
       alert("File order saved successfully!");
     } catch (error) {
       setError(

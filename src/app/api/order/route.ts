@@ -1,48 +1,53 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { createClient } from "@/utils/supabase/client"; // Adjust the import path based on your folder structure
 
-const orderFilePath = path.join(process.cwd(), "src", "app", "order.json");
+const supabase = createClient();
 
+// GET method for fetching the current order data from Supabase
 export async function GET() {
   try {
-    const data = fs.readFileSync(orderFilePath, "utf-8");
-    const json = JSON.parse(data);
-    return NextResponse.json(json);
-  } catch {
+    const { data, error } = await supabase.from("pdf_order").select("*");
+
+    if (error) {
+      console.error("Error retrieving data from Supabase:", error); // Log the error
+      throw error;
+    }
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Unexpected error occurred:", error); // Log the error
     return NextResponse.json(
-      { error: "Failed to read order file." },
+      { error: "Failed to retrieve the order from Supabase." },
       { status: 500 }
     );
   }
 }
 
+// POST method for updating the order data in Supabase
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // Read existing data from the JSON file
-    let existingData;
-    try {
-      const data = fs.readFileSync(orderFilePath, "utf-8");
-      existingData = JSON.parse(data);
-    } catch {
-      return NextResponse.json(
-        { error: "Failed to read existing order file." },
-        { status: 500 }
-      );
+    // Loop through each category in the request body to update the Supabase table
+    for (const category of Object.keys(body)) {
+      const fileOrder = body[category];
+
+      const { error } = await supabase
+        .from("pdf_order")
+        .update({ file_order: fileOrder })
+        .eq("category", category);
+
+      if (error) {
+        console.error("Error updating Supabase:", error); // Log the error
+        throw error;
+      }
     }
 
-    // Merge the existing data with the new data from the request
-    const updatedData = { ...existingData, ...body };
-
-    // Write the merged data back to the file
-    fs.writeFileSync(orderFilePath, JSON.stringify(updatedData, null, 2));
-
     return NextResponse.json({ message: "Order updated successfully." });
-  } catch {
+  } catch (error) {
+    console.error("Unexpected error occurred:", error); // Log the error
     return NextResponse.json(
-      { error: "Failed to write to order file." },
+      { error: "Failed to update the order in Supabase." },
       { status: 500 }
     );
   }
