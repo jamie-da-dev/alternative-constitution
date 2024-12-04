@@ -19,7 +19,6 @@ const Navbar: React.FC = () => {
   const supabase: SupabaseClient = createClient();
 
   useEffect(() => {
-    // Fetch the list of files from the 'listen-up' folder in Supabase storage
     const fetchFolderFiles = async () => {
       try {
         setLoading(true);
@@ -31,14 +30,13 @@ const Navbar: React.FC = () => {
           .list("Alternative Constitution");
         const explanation = supabase.storage.from("pdf").list("Explanation");
         const listenUp = supabase.storage.from("pdf").list("Listen Up");
-        // Wait for all the file fetches to complete
+
         const [altData, expData, listenUpData] = await Promise.all([
           alternativeConstitution,
           explanation,
           listenUp,
         ]);
 
-        // Handle the responses
         if (altData.error) {
           setError(altData.error.message);
           return;
@@ -88,12 +86,20 @@ const Navbar: React.FC = () => {
     setSelectedIndex(-1); // Reset selected index when PDF is closed
   };
 
-  // Helper function to add conditional class for highlighting selected item
+  // Helper function to get button class for both text and indicator
   const getButtonClass = (category: string, index: number) => {
     if (selectedCategory === category && selectedIndex === index) {
       return "text-blue-400"; // Highlight color when selected
     }
     return "text-white"; // Default color
+  };
+
+  // Helper function to get indicator class for the selection state
+  const getIndicatorClass = (category: string, index: number) => {
+    if (selectedCategory === category && selectedIndex === index) {
+      return "bg-red-500"; // Change to red when selected
+    }
+    return "bg-blue-500 group-hover:bg-blue-700 transition-colors"; // Default blue color with hover
   };
 
   return (
@@ -112,13 +118,23 @@ const Navbar: React.FC = () => {
                 <li>Error: {error}</li>
               ) : (
                 alternativeConstitutionFiles.map((file, index) => {
-                  // Remove .pdf from the file name
                   const fileNameWithoutPdf = file.replace(/\.pdf$/, "");
 
                   return (
-                    <li key={index}>
+                    <li key={index} className="flex items-center group">
+                      {/* Indicator/Button to the left of the PDF name */}
                       <button
-                        className={`text-left ${getButtonClass(
+                        className={`mr-3 w-4 h-4 rounded-full ${getIndicatorClass(
+                          "Alternative Constitution",
+                          index
+                        )}`}
+                        aria-label={`Select ${fileNameWithoutPdf}`}
+                        onClick={() =>
+                          handleButtonClick("Alternative Constitution", index)
+                        }
+                      />
+                      <button
+                        className={`text-left group-hover:text-blue-400 transition-colors ${getButtonClass(
                           "Alternative Constitution",
                           index
                         )}`}
@@ -143,13 +159,21 @@ const Navbar: React.FC = () => {
                 <li>Error: {error}</li>
               ) : (
                 explanationFiles.map((file, index) => {
-                  // Remove .pdf from the file name
                   const fileNameWithoutPdf = file.replace(/\.pdf$/, "");
 
                   return (
-                    <li key={index}>
+                    <li key={index} className="flex items-center group">
+                      {/* Indicator/Button to the left of the PDF name */}
                       <button
-                        className={`text-left ${getButtonClass(
+                        className={`mr-3 w-4 h-4 rounded-full ${getIndicatorClass(
+                          "Explanation",
+                          index
+                        )}`}
+                        aria-label={`Select ${fileNameWithoutPdf}`}
+                        onClick={() => handleButtonClick("Explanation", index)}
+                      />
+                      <button
+                        className={`text-left group-hover:text-blue-400 transition-colors ${getButtonClass(
                           "Explanation",
                           index
                         )}`}
@@ -172,13 +196,21 @@ const Navbar: React.FC = () => {
                 <li>Error: {error}</li>
               ) : (
                 listenUpFiles.map((file, index) => {
-                  // Remove .pdf from the file name
                   const fileNameWithoutPdf = file.replace(/\.pdf$/, "");
 
                   return (
-                    <li key={index}>
+                    <li key={index} className="flex items-center group">
+                      {/* Indicator/Button to the left of the PDF name */}
                       <button
-                        className={`text-left ${getButtonClass(
+                        className={`mr-3 w-4 h-4 rounded-full ${getIndicatorClass(
+                          "Listen Up",
+                          index
+                        )}`}
+                        aria-label={`Select ${fileNameWithoutPdf}`}
+                        onClick={() => handleButtonClick("Listen Up", index)}
+                      />
+                      <button
+                        className={`text-left group-hover:text-blue-400 transition-colors ${getButtonClass(
                           "Listen Up",
                           index
                         )}`}
