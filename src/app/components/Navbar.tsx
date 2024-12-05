@@ -5,7 +5,6 @@ import React, { useState, useEffect } from "react";
 import PdfViewer from "./PdfViewer";
 import { createClient } from "@/utils/supabase/client"; // Adjust the import as needed
 import { SupabaseClient } from "@supabase/supabase-js";
-import { FiMenu } from "react-icons/fi"; // Import menu icon
 
 const Navbar: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
