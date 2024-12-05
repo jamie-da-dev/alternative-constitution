@@ -110,7 +110,10 @@ const Navbar: React.FC = () => {
     index: number,
     fileName: string
   ) => {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Windows Phone|Kindle|Silk|PlayBook|BB10|Mobile|Tablet|Touch/i.test(
+        navigator.userAgent
+      );
 
     const { data: publicUrlData } = supabase.storage
       .from("pdf")
