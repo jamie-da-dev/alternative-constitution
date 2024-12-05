@@ -312,7 +312,7 @@ const Navbar: React.FC = () => {
         <main className="flex-1 h-[100vh] w-[calc(100vw-320px)] lg:w-[calc(100vw-400px)] xl:w-[calc(100vw-500px)]">
           <div>
             <button
-              className="absolute top-2 right-8 text-black text-lg"
+              className="absolute top-2 right-8 text-red-500 hover:text-red-700 text-lg transition-colors"
               onClick={handleClosePdf}
             >
               X (Close)

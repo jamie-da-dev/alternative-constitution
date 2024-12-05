@@ -3,7 +3,7 @@
 const Index = () => {
   return (
     <main className="flex-1 p-2 min-h-screen ml-[320px] lg:ml-[400px] xl:ml-[500px]">
-      <header className="bg-gray-800 text-white p-4 rounded-md shadow-md mb-8">
+      <header className="bg-gray-800 text-white p-4 rounded-md shadow-md mb-4">
         <h1 className="text-3xl font-bold text-center">
           Alternative Constitution
         </h1>
@@ -12,7 +12,7 @@ const Index = () => {
       <div className="p-4 mx-auto space-y-10">
         <h2 className="text-center text-2xl font-bold">Welcome</h2>
 
-        <p>
+        <p className="!mt-6">
           You have reached the place to find information about an{" "}
           <strong>Alternative Constitution</strong> to that being proposed for
           adoption by RNZRSA.
