@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="p-4 bg-gray-800 text-white py-4 ml-[320px] lg:ml-[400px] xl:ml-[500px]">
+    <footer className="p-4 bg-gray-800 text-white py-4 ml-[0px] lg:ml-[400px] xl:ml-[500px]">
       <div className="flex justify-between items-center">
         {/* Admin email on the left */}
         <p className="text-sm">

@@ -1,9 +1,11 @@
+// Adjusted code to implement responsive Navbar visibility on mobile
 "use client";
 
 import React, { useState, useEffect } from "react";
 import PdfViewer from "./PdfViewer";
 import { createClient } from "@/utils/supabase/client"; // Adjust the import as needed
 import { SupabaseClient } from "@supabase/supabase-js";
+import { FiMenu } from "react-icons/fi"; // Import menu icon
 
 const Navbar: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -16,6 +18,7 @@ const Navbar: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true); // Track loading state
   const [error, setError] = useState<string | null>(null); // Track error state
   const [showPdf, setShowPdf] = useState<boolean>(false); // Track whether to show the PDF viewer
+  const [isNavbarVisible, setIsNavbarVisible] = useState<boolean>(false); // Track Navbar visibility
 
   const supabase: SupabaseClient = createClient();
 
@@ -102,15 +105,37 @@ const Navbar: React.FC = () => {
     fetchFolderFiles();
   }, []); // Only run once when component mounts
 
-  const handleButtonClick = (
+  const handleButtonClick = async (
     category: string,
     index: number,
     fileName: string
   ) => {
-    setSelectedCategory(category);
-    setSelectedIndex(index);
-    setSelectedFile(fileName); // Set the selected file name
-    setShowPdf(true); // Show PDF viewer when a file is selected
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    const { data: publicUrlData } = supabase.storage
+      .from("pdf")
+      .getPublicUrl(`${category}/${fileName}`);
+
+    const fileUrl = publicUrlData.publicUrl;
+
+    if (isMobile) {
+      // Trigger download on mobile
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = fileName; // Suggested filename for download
+      link.target = "_blank"; // Open in a new tab as a fallback
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setIsNavbarVisible(false);
+    } else {
+      // Show PDF in viewer for non-mobile
+      setSelectedCategory(category);
+      setSelectedIndex(index);
+      setSelectedFile(fileName); // Set the selected file name
+      setShowPdf(true); // Show PDF viewer when a file is selected
+      setIsNavbarVisible(false); // Close Navbar when PDF is opened
+    }
   };
 
   const handleClosePdf = () => {
@@ -137,8 +162,32 @@ const Navbar: React.FC = () => {
 
   return (
     <div className="fixed flex h-screen">
+      {/* Menu Icon for Mobile */}
+      <div
+        className={`absolute top-6 left-6 lg:hidden z-50 ${
+          isNavbarVisible ? "invisible" : "visible"
+        }`}
+      >
+        <button
+          onClick={() => setIsNavbarVisible(!isNavbarVisible)}
+          className="text-white text-2xl"
+        >
+          <FiMenu />
+        </button>
+      </div>
+
       {/* Left Navbar */}
-      <aside className="bg-gray-800 text-white p-4 overflow-y-auto max-h-screen w-[320px] lg:w-[400px] xl:w-[500px]">
+      <aside
+        className={`bg-gray-800 text-white p-4 overflow-y-auto transition-transform duration-300 transform lg:translate-x-0 ${
+          isNavbarVisible
+            ? "w-[100vw] h-[100vh] translate-x-0"
+            : "-translate-x-full"
+        } lg:max-h-screen lg:w-[320px] lg:w-[400px] xl:w-[500px] lg:static fixed z-40`}
+        style={{
+          maxWidth: "100vw",
+          maxHeight: "100vh",
+        }}
+      >
         <nav className="space-y-12 p-4">
           {/* Home Button */}
           <div className="mt-4">
@@ -148,6 +197,7 @@ const Navbar: React.FC = () => {
                 handleClosePdf();
                 setShowPdf(false); // Ensure the PDF is closed
                 window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top
+                setIsNavbarVisible(false); // Close Navbar after selection
               }}
             >
               {/* Indicator */}
@@ -309,7 +359,7 @@ const Navbar: React.FC = () => {
 
       {/* Main Content Area */}
       {showPdf && selectedCategory && (
-        <main className="flex-1 h-[100vh] w-[calc(100vw-320px)] lg:w-[calc(100vw-400px)] xl:w-[calc(100vw-500px)]">
+        <main className="flex-1 h-[100vh] w-[100vw] lg:w-[calc(100vw-400px)] xl:w-[calc(100vw-500px)]">
           <div>
             <button
               className="absolute top-2 right-8 text-red-500 hover:text-red-700 text-lg transition-colors"
