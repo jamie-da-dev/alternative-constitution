@@ -122,6 +122,7 @@ const Navbar: React.FC = () => {
 
     if (isMobile) {
       // Trigger download on mobile
+      document.querySelector("aside")?.scrollTo({ top: 0, behavior: "smooth" });
       const link = document.createElement("a");
       link.href = fileUrl;
       link.download = fileName; // Suggested filename for download
@@ -137,7 +138,6 @@ const Navbar: React.FC = () => {
       setSelectedFile(fileName); // Set the selected file name
       setShowPdf(true); // Show PDF viewer when a file is selected
       setIsNavbarVisible(false); // Close Navbar when PDF is opened
-      document.querySelector("aside")?.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
