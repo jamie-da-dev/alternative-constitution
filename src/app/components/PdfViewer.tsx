@@ -52,20 +52,33 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ folder, fileName }) => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="w-full h-screen flex justify-center items-center bg-red-100">
+        <div className="text-xl font-semibold text-red-600">{error}</div>
+      </div>
+    );
   }
 
   if (!pdfUrl) {
-    return <div>No PDF available</div>;
+    return (
+      <div className="w-full h-screen flex justify-center items-center bg-gray-100">
+        <div className="text-xl font-semibold text-gray-600">
+          No PDF available
+        </div>
+      </div>
+    );
   }
 
+  // Use Google Docs Viewer
+  const googleDocsUrl = `https://docs.google.com/gview?url=${pdfUrl}&embedded=true`;
+
   return (
-    <div className="bg-white">
+    <div className="bg-white h-screen">
       <iframe
-        src={pdfUrl}
+        src={googleDocsUrl}
         width="100%"
-        height="3000px"
-        title="PDF Viewer"
+        height="100%"
+        title="PDF Viewer (Google Docs)"
         className="border-0"
       />
     </div>
