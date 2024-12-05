@@ -138,6 +138,7 @@ const Navbar: React.FC = () => {
       setSelectedFile(fileName); // Set the selected file name
       setShowPdf(true); // Show PDF viewer when a file is selected
       setIsNavbarVisible(false); // Close Navbar when PDF is opened
+      document.querySelector("aside")?.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -167,16 +168,12 @@ const Navbar: React.FC = () => {
     <div className="fixed flex h-screen">
       {/* Menu Icon for Mobile */}
       <div
-        className={`absolute top-6 left-6 lg:hidden z-50 ${
+        className={`absolute top-[18px] left-0 h-12 w-6 bg-blue-600 flex items-center justify-center cursor-pointer ${
           isNavbarVisible ? "invisible" : "visible"
         }`}
+        onClick={() => setIsNavbarVisible(!isNavbarVisible)}
       >
-        <button
-          onClick={() => setIsNavbarVisible(!isNavbarVisible)}
-          className="text-white text-2xl"
-        >
-          <FiMenu />
-        </button>
+        <span className="text-white text-xl font-bold">{">"}</span>
       </div>
 
       {/* Left Navbar */}
