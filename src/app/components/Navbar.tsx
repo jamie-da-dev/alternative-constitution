@@ -111,9 +111,9 @@ const Navbar: React.FC = () => {
     fileName: string
   ) => {
     const isMobile =
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Windows Phone|Kindle|Silk|PlayBook|BB10|Mobile|Tablet|Touch/i.test(
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Windows Phone|Kindle|Silk|PlayBook|BB10|Mobile|Tablet|Touch|Macintosh/i.test(
         navigator.userAgent
-      );
+      ) && "ontouchend" in document;
 
     const { data: publicUrlData } = supabase.storage
       .from("pdf")
