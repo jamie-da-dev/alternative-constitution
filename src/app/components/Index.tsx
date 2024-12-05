@@ -2,7 +2,7 @@
 
 const Index = () => {
   return (
-    <main className="flex-1 p-2 min-h-screen ml-[500px]">
+    <main className="flex-1 p-2 min-h-screen ml-[320px] lg:ml-[400px] xl:ml-[500px]">
       <header className="bg-gray-800 text-white p-4 rounded-md shadow-md mb-8">
         <h1 className="text-3xl font-bold text-center">
           Alternative Constitution

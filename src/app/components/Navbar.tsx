@@ -138,10 +138,33 @@ const Navbar: React.FC = () => {
   return (
     <div className="fixed flex h-screen">
       {/* Left Navbar */}
-      <aside className="w-[500px] bg-gray-800 text-white p-4 overflow-y-auto max-h-screen">
+      <aside className="bg-gray-800 text-white p-4 overflow-y-auto max-h-screen w-[320px] lg:w-[400px] xl:w-[500px]">
         <nav className="space-y-12 p-4">
+          {/* Home Button */}
+          <div className="mt-4">
+            <button
+              className="flex items-center space-x-2 group"
+              onClick={() => {
+                handleClosePdf();
+                setShowPdf(false); // Ensure the PDF is closed
+                window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top
+              }}
+            >
+              {/* Indicator */}
+              <div
+                className="w-4 h-4 rounded-full bg-blue-500 group-hover:bg-blue-700 transition-colors"
+                aria-label="Home Indicator"
+              />
+              {/* Home Text */}
+              <span className="font-semibold text-xl lg:text-2xl text-white group-hover:text-blue-400 transition-colors">
+                Home
+              </span>
+            </button>
+          </div>
+
+          {/* Alternative Constitution Section */}
           <div>
-            <h3 className="font-semibold text-2xl mb-4">
+            <h3 className="font-semibold text-xl lg:text-2xl mb-4">
               Alternative Constitution
             </h3>
             <ul className="pl-6 space-y-4">
@@ -157,7 +180,7 @@ const Navbar: React.FC = () => {
                     <li key={index} className="flex items-center group">
                       {/* Indicator/Button to the left of the PDF name */}
                       <button
-                        className={`mr-3 w-4 h-4 rounded-full ${getIndicatorClass(
+                        className={`pr-4 w-4 h-4 rounded-full ${getIndicatorClass(
                           "Alternative Constitution",
                           index
                         )}`}
@@ -171,7 +194,7 @@ const Navbar: React.FC = () => {
                         }
                       />
                       <button
-                        className={`text-left group-hover:text-blue-400 transition-colors ${getButtonClass(
+                        className={`pl-4 text-left text-lg xl:text-xl group-hover:text-blue-400 transition-colors ${getButtonClass(
                           "Alternative Constitution",
                           index
                         )}`}
@@ -191,8 +214,12 @@ const Navbar: React.FC = () => {
               )}
             </ul>
           </div>
+
+          {/* Explanation Section */}
           <div>
-            <h3 className="font-semibold text-2xl mb-4">Explanation</h3>
+            <h3 className="font-semibold text-xl lg:text-2xl mb-4">
+              Explanation
+            </h3>
             <ul className="pl-6 space-y-4">
               {loading ? (
                 <li>Loading...</li>
@@ -206,7 +233,7 @@ const Navbar: React.FC = () => {
                     <li key={index} className="flex items-center group">
                       {/* Indicator/Button to the left of the PDF name */}
                       <button
-                        className={`mr-3 w-4 h-4 rounded-full ${getIndicatorClass(
+                        className={`pr-4 w-4 h-4 rounded-full ${getIndicatorClass(
                           "Explanation",
                           index
                         )}`}
@@ -216,7 +243,7 @@ const Navbar: React.FC = () => {
                         }
                       />
                       <button
-                        className={`text-left group-hover:text-blue-400 transition-colors ${getButtonClass(
+                        className={`pl-4 text-left text-lg xl:text-xl group-hover:text-blue-400 transition-colors ${getButtonClass(
                           "Explanation",
                           index
                         )}`}
@@ -232,8 +259,12 @@ const Navbar: React.FC = () => {
               )}
             </ul>
           </div>
+
+          {/* Listen Up Section */}
           <div>
-            <h3 className="font-semibold text-2xl mb-4">Listen Up</h3>
+            <h3 className="font-semibold text-xl lg:text-2xl mb-4">
+              Listen Up
+            </h3>
             <ul className="pl-6 space-y-4">
               {loading ? (
                 <li>Loading...</li>
@@ -247,7 +278,7 @@ const Navbar: React.FC = () => {
                     <li key={index} className="flex items-center group">
                       {/* Indicator/Button to the left of the PDF name */}
                       <button
-                        className={`mr-3 w-4 h-4 rounded-full ${getIndicatorClass(
+                        className={`pr-4 w-4 h-4 rounded-full ${getIndicatorClass(
                           "Listen Up",
                           index
                         )}`}
@@ -257,7 +288,7 @@ const Navbar: React.FC = () => {
                         }
                       />
                       <button
-                        className={`text-left group-hover:text-blue-400 transition-colors ${getButtonClass(
+                        className={`pl-4 text-left text-lg xl:text-xl group-hover:text-blue-400 transition-colors ${getButtonClass(
                           "Listen Up",
                           index
                         )}`}
@@ -275,9 +306,10 @@ const Navbar: React.FC = () => {
           </div>
         </nav>
       </aside>
+
       {/* Main Content Area */}
       {showPdf && selectedCategory && (
-        <main className="flex-1 w-[calc(100vw-500px)] h-[100vh]">
+        <main className="flex-1 h-[100vh] w-[calc(100vw-320px)] lg:w-[calc(100vw-400px)] xl:w-[calc(100vw-500px)]">
           <div>
             <button
               className="absolute top-2 right-8 text-black text-lg"
