@@ -181,7 +181,7 @@ const Navbar: React.FC = () => {
           isNavbarVisible
             ? "w-[100vw] h-[100vh] translate-x-0"
             : "-translate-x-full"
-        } lg:max-h-screen lg:w-[320px] lg:w-[400px] xl:w-[500px] lg:static fixed z-40`}
+        } lg:max-h-screen lg:w-[320px] lg:w-[400px] xl:w-[515px] lg:static fixed z-40`}
         style={{
           maxWidth: "100vw",
           maxHeight: "100vh",
@@ -205,7 +205,7 @@ const Navbar: React.FC = () => {
                 aria-label="Home Indicator"
               />
               {/* Home Text */}
-              <span className="font-semibold text-xl lg:text-2xl text-white group-hover:text-blue-400 transition-colors">
+              <span className="font-semibold text-lg lg:text-xl text-white group-hover:text-blue-400 transition-colors">
                 Home
               </span>
             </button>
@@ -213,7 +213,7 @@ const Navbar: React.FC = () => {
 
           {/* Alternative Constitution Section */}
           <div>
-            <h3 className="font-semibold text-xl lg:text-2xl mb-4">
+            <h3 className="font-semibold text-lg lg:text-xl mb-4">
               Alternative Constitution
             </h3>
             <ul className="pl-6 space-y-4">
@@ -243,7 +243,7 @@ const Navbar: React.FC = () => {
                         }
                       />
                       <button
-                        className={`pl-4 text-left text-lg xl:text-xl group-hover:text-blue-400 transition-colors ${getButtonClass(
+                        className={`pl-4 text-left text-base xl:text-lg group-hover:text-blue-400 transition-colors ${getButtonClass(
                           "Alternative Constitution",
                           index
                         )}`}
@@ -266,7 +266,7 @@ const Navbar: React.FC = () => {
 
           {/* Explanation Section */}
           <div>
-            <h3 className="font-semibold text-xl lg:text-2xl mb-4">
+            <h3 className="font-semibold text-base lg:text-xl mb-4">
               Explanation
             </h3>
             <ul className="pl-6 space-y-4">
@@ -292,7 +292,7 @@ const Navbar: React.FC = () => {
                         }
                       />
                       <button
-                        className={`pl-4 text-left text-lg xl:text-xl group-hover:text-blue-400 transition-colors ${getButtonClass(
+                        className={`pl-4 text-left text-base xl:text-lg group-hover:text-blue-400 transition-colors ${getButtonClass(
                           "Explanation",
                           index
                         )}`}
@@ -311,9 +311,7 @@ const Navbar: React.FC = () => {
 
           {/* Listen Up Section */}
           <div>
-            <h3 className="font-semibold text-xl lg:text-2xl mb-4">
-              Listen Up
-            </h3>
+            <h3 className="font-semibold text-lg lg:text-xl mb-4">Listen Up</h3>
             <ul className="pl-6 space-y-4">
               {loading ? (
                 <li>Loading...</li>
@@ -337,7 +335,7 @@ const Navbar: React.FC = () => {
                         }
                       />
                       <button
-                        className={`pl-4 text-left text-lg xl:text-xl group-hover:text-blue-400 transition-colors ${getButtonClass(
+                        className={`pl-4 text-left text-base xl:text-lg group-hover:text-blue-400 transition-colors ${getButtonClass(
                           "Listen Up",
                           index
                         )}`}
