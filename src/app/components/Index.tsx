@@ -10,20 +10,20 @@ const Index = () => {
       </header>
 
       <div className="p-4 mx-auto space-y-10">
-        <h2 className="text-center text-2xl font-bold">Welcome</h2>
-
-        <p className="!mt-6 text-lg">
-          You have reached the place to find information about an{" "}
-          <strong>Alternative Constitution</strong> to that being proposed for
-          adoption by RNZRSA.
-        </p>
-
-        <p className="text-lg">
-          This site is promoted by a group of RSAs that believe what the Board
-          of RNZRSA is proposing to replace the existing rules is undemocratic
-          and not in the best interests of local RSAs and Affiliate
-          organisations.
-        </p>
+        <section>
+          <h2 className="text-center text-2xl font-bold mb-6">Welcome</h2>
+          <p className="text-lg mb-3">
+            You have reached the place to find information about an{" "}
+            <strong>Alternative Constitution</strong> to that being proposed for
+            adoption by RNZRSA.
+          </p>
+          <p className="text-lg">
+            This site is promoted by a group of RSAs that believe what the Board
+            of RNZRSA is proposing to replace the existing rules is undemocratic
+            and not in the best interests of local RSAs and Affiliate
+            organisations.
+          </p>
+        </section>
 
         <section>
           <h3 className="text-xl font-semibold mb-3">
