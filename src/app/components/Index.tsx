@@ -12,48 +12,63 @@ const Index = () => {
       <div className="p-4 mx-auto space-y-10">
         <h2 className="text-center text-2xl font-bold">Welcome</h2>
 
-        <p className="!mt-6">
+        <p className="!mt-6 text-lg">
           You have reached the place to find information about an{" "}
           <strong>Alternative Constitution</strong> to that being proposed for
           adoption by RNZRSA.
         </p>
 
-        <p>
-          This site is promoted by a group of RSAs who believe the proposed
-          RNZRSA Board rules are undemocratic and not in the best interests of
-          local RSAs and Affiliate organisations.
+        <p className="text-lg">
+          This site is promoted by a group of RSAs that believe what the Board
+          of RNZRSA is proposing to replace the existing rules is undemocratic
+          and not in the best interests of local RSAs and Affiliate
+          organisations.
         </p>
 
         <section>
           <h3 className="text-xl font-semibold mb-3">
             The Special General Meeting
           </h3>
-          <p>
+          <p className="mb-3 text-lg">
             The Board has scheduled a{" "}
             <strong>Special General Meeting and National Council</strong> for
-            <strong> 15 February 2025</strong> to vote on adopting their New
-            Constitution.
+            <strong> 15 February 2025</strong> to have you vote to adopt their
+            New Constitution.
           </p>
-          <p className="text-lg ">
+          <p className="mb-3 text-lg">
             We strongly recommend you vote{" "}
             <span className="text-red-600 font-bold">NO</span> to that motion.
           </p>
           <p className="text-lg">
-            Instead, we propose voting{" "}
+            Instead, we have submitted a Notice of Motion that asks you to vote{" "}
             <span className="text-green-600 font-bold">YES</span> to the
-            Alternative Constitution.
+            <strong> Alternative Constitution</strong>.
           </p>
         </section>
 
         <section>
           <h3 className="text-xl font-semibold mb-3">Our Argument</h3>
-          <p>
+          <p className="mb-3 text-lg">
             We explain on this website why you should not support the RNZRSA
             motion, and instead vote{" "}
             <span className="text-green-600 font-bold">YES</span> for the
             <strong> Alternative Constitution</strong>.
           </p>
-          <p>
+          <p className="mb-3 text-lg">
+            The RNZRSA says “they have listened and made changes” to their
+            proposed constitution, so where is the revised version with the
+            changes incorporated? That is being held back to only be released
+            just before Christmas so you have minimal time to read it. The
+            Alternative Constitution is not relying on old information. We are
+            aware of what has been proposed. Such as the President being a Board
+            Member. We oppose that change because it compromises the President.
+            The ITF Report in 2014 said it should never happen, and we agree. We
+            are aware that they have now proposed every RSA gets two votes. That
+            is not democracy. It is a cynical way of giving the same votes from
+            a tiny RSA as one with hundreds and even thousands of members. We
+            explain our opposition further in the Listen Up series.
+          </p>
+          <p className="text-lg">
             Click on a subject item in the <strong>Menu</strong> to read our
             take on what the Board is proposing and why it should not be
             approved for an RNZRSA that cherishes natural justice, common sense,
@@ -65,28 +80,20 @@ const Index = () => {
           <h3 className="text-xl font-semibold mb-3">
             Download the Full Version
           </h3>
-          <p>
+          <p className="text-lg">
             You can also read the full version of the{" "}
-            <strong>Alternative Constitution</strong> we propose to be adopted,
-            along with an <strong>Explanation Sheet</strong> that addresses each
-            amendment, clause by clause, with our recommendations for governing
-            the RNZRSA going forward.
-          </p>
-        </section>
-
-        <section>
-          <h3 className="text-xl font-semibold mb-3">Additional Resources</h3>
-          <p>
-            There are also individual sheets that examine and explain specific
-            aspects that you should be aware of.
+            <strong>Alternative Constitution</strong> we propose is adopted, and
+            there is also an <strong>Explanation Sheet</strong> that addresses
+            each amendment, clause by clause, and our argument why we recommend
+            our approach to governing the RNZRSA going forward.
           </p>
         </section>
 
         <section>
           <h3 className="text-xl font-semibold mb-3">Get Involved</h3>
-          <p>
+          <p className="text-lg">
             You can download any item for your use, and if you wish to make a
-            comment, please email us at{" "}
+            comment, please email{" "}
             <a
               href="mailto:admin@alternativeconstitution.nz"
               className="text-blue-500 font-medium"
