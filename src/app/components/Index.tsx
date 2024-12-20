@@ -65,7 +65,7 @@ const Index: React.FC = () => {
           <p className="text-red-600 text-lg text-center">{error}</p>
         ) : pdfLink ? (
           <iframe
-            src={`${pdfLink}#toolbar=0`}
+            src={`${pdfLink}#toolbar=0&view=Fit`}
             width="100%"
             height="100%"
             title="PDF Viewer"
