@@ -9,7 +9,7 @@ const AdminPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
-  const [folder, setFolder] = useState<string>("Alternative Constitution");
+  const [folder, setFolder] = useState<string>("Index");
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   const supabase = createClient();
@@ -44,7 +44,10 @@ const AdminPage: React.FC = () => {
           .eq("category", folder)
           .single();
 
-        if (orderError) throw orderError;
+        if (orderError && orderError.code !== "PGRST116") {
+          // If the error is not just "Row not found", throw it
+          throw orderError;
+        }
 
         // Fetch the current files from Supabase storage
         const { data: storageData, error: fetchError } = await supabase.storage
@@ -54,8 +57,6 @@ const AdminPage: React.FC = () => {
         if (fetchError) throw fetchError;
 
         const currentFiles = storageData.map((file) => file.name);
-
-        // Update order based on current files, adding missing files and removing deleted ones
         let updatedOrder = currentFiles;
 
         if (orderData?.file_order) {
@@ -80,7 +81,7 @@ const AdminPage: React.FC = () => {
     };
 
     fetchFiles();
-  }, [folder, isAuthenticated]);
+  }, [folder, isAuthenticated, supabase]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -229,6 +230,7 @@ const AdminPage: React.FC = () => {
           onChange={(e) => setFolder(e.target.value)}
           className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
+          <option value="Index">Index</option>
           <option value="Alternative Constitution">
             Alternative Constitution
           </option>

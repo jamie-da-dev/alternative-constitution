@@ -9,8 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@editorjs/editorjs": "^2.30.7",
+    "@editorjs/header": "^2.8.8",
+    "@editorjs/list": "^2.0.2",
+    "@editorjs/paragraph": "^2.11.7",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.46.2",
+    "@vestfoldfylke/pdf-text-extract": "^2.0.1",
     "axios": "^1.7.9",
     "next": "15.0.3",
     "pdfjs-dist": "^3.4.120",
@@ -20,6 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/pdfjs-dist": "^2.10.377",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",

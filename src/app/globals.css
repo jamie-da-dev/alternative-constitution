@@ -20,3 +20,8 @@ iframe {
   max-height: 100vh;
   padding-top: 45px;
 }
+
+.index {
+  padding: 0px;
+  height: calc(100vh - 86px);
+}
