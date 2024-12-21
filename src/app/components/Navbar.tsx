@@ -12,7 +12,6 @@ const Navbar: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1); // Start with -1 to indicate no item is selected
   const [alternativeConstitutionFiles, setAlternativeConstitutionFiles] =
     useState<string[]>([]);
-  const [explanationFiles, setExplanationFiles] = useState<string[]>([]);
   const [listenUpFiles, setListenUpFiles] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true); // Track loading state
   const [error, setError] = useState<string | null>(null); // Track error state
@@ -37,16 +36,14 @@ const Navbar: React.FC = () => {
           return;
         }
 
-        // Fetch files from 'Alternative Constitution', 'Explanation', and 'Listen Up' folders
+        // Fetch files from 'Alternative Constitution', and 'Listen Up' folders
         const alternativeConstitution = supabase.storage
           .from("pdf")
           .list("Alternative Constitution");
-        const explanation = supabase.storage.from("pdf").list("Explanation");
         const listenUp = supabase.storage.from("pdf").list("Listen Up");
 
-        const [altData, expData, listenUpData] = await Promise.all([
+        const [altData, listenUpData] = await Promise.all([
           alternativeConstitution,
-          explanation,
           listenUp,
         ]);
 
@@ -55,17 +52,12 @@ const Navbar: React.FC = () => {
           return;
         }
 
-        if (expData.error) {
-          setError(expData.error.message);
-          return;
-        }
-
         if (listenUpData.error) {
           setError(listenUpData.error.message);
           return;
         }
 
-        if (altData.data && expData.data && listenUpData.data && orderData) {
+        if (altData.data && listenUpData.data && orderData) {
           const getOrderForCategory = (category: string) =>
             orderData.find((item) => item.category === category)?.file_order ||
             [];
@@ -75,12 +67,6 @@ const Navbar: React.FC = () => {
             getOrderForCategory("Alternative Constitution").length
               ? getOrderForCategory("Alternative Constitution")
               : altData.data.map((file) => file.name)
-          );
-
-          setExplanationFiles(
-            getOrderForCategory("Explanation").length
-              ? getOrderForCategory("Explanation")
-              : expData.data.map((file) => file.name)
           );
 
           setListenUpFiles(
@@ -253,51 +239,6 @@ const Navbar: React.FC = () => {
                             index,
                             file
                           )
-                        }
-                      >
-                        {fileNameWithoutPdf}
-                      </button>
-                    </li>
-                  );
-                })
-              )}
-            </ul>
-          </div>
-
-          {/* Explanation Section */}
-          <div>
-            <h3 className="font-semibold text-base lg:text-xl mb-4">
-              Explanation
-            </h3>
-            <ul className="pl-6 space-y-4">
-              {loading ? (
-                <li>Loading...</li>
-              ) : error ? (
-                <li>Error: {error}</li>
-              ) : (
-                explanationFiles.map((file, index) => {
-                  const fileNameWithoutPdf = file.replace(/\.pdf$/, "");
-
-                  return (
-                    <li key={index} className="flex items-center group">
-                      {/* Indicator/Button to the left of the PDF name */}
-                      <button
-                        className={`pr-4 w-4 h-4 rounded-full ${getIndicatorClass(
-                          "Explanation",
-                          index
-                        )}`}
-                        aria-label={`Select ${fileNameWithoutPdf}`}
-                        onClick={() =>
-                          handleButtonClick("Explanation", index, file)
-                        }
-                      />
-                      <button
-                        className={`pl-4 text-left text-base xl:text-lg group-hover:text-blue-400 transition-colors ${getButtonClass(
-                          "Explanation",
-                          index
-                        )}`}
-                        onClick={() =>
-                          handleButtonClick("Explanation", index, file)
                         }
                       >
                         {fileNameWithoutPdf}

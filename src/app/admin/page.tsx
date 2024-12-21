@@ -234,7 +234,6 @@ const AdminPage: React.FC = () => {
           <option value="Alternative Constitution">
             Alternative Constitution
           </option>
-          <option value="Explanation">Explanation</option>
           <option value="Listen Up">Listen Up</option>
         </select>
       </div>
